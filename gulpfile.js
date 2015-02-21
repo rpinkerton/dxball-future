@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var loadPlugins = require('gulp-load-plugins');
+var gh_deploy = require('gulp-gh-pages');
 var path = require('path');
 
 /**
@@ -92,6 +93,9 @@ globs = {
   }),
   dist: val(function() {
     return 'dist';
+  }),
+  dists: val(function() {
+    return path.join(globs.dist(), '**', '*');
   }),
   dts: val(function() {
     return [
@@ -275,4 +279,11 @@ gulp.task('tslint', function() {
       .pipe(_.tslint.report({
         emitError: env.isTest()
       }));
+});
+
+/**
+ * Push to gh-pages branch.
+ */
+gulp.task('gh-pages', ['web-setup'], function() {
+  return gulp.src(globs.dists()).pipe(gh_deploy({}));
 });
