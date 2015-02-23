@@ -5,30 +5,30 @@ exports.Game = require("./game");
 exports.CANVAS_ID = "dxball-canvas";
 exports.INITIAL_PADDLE_WIDTH = 100;
 exports.INITIAL_INTERVAL_MS = 10;
+exports.SCREEN_WIDTH_PX = 640;
+exports.SCREEN_HEIGHT_PX = 480;
 
 },{}],3:[function(require,module,exports){
 var constants = require("./constants");
+var Paddle = require("./paddle");
 var Game = (function () {
     function Game() {
         this.canvas = document.getElementById(constants.CANVAS_ID);
         this.ctx = this.canvas.getContext("2d");
         this.width = this.canvas.clientWidth;
         this.height = this.canvas.clientHeight;
+        this.paddle = new Paddle();
     }
     Game.init = function () {
         var game = new Game();
         game.canvas.addEventListener("mousemove", game.storeMousePosition.bind(game), false);
         setInterval(game.draw.bind(game), constants.INITIAL_INTERVAL_MS);
+        game.canvas.style.cursor = "none";
         return game;
     };
     Game.prototype.draw = function () {
         this.ctx.clearRect(0, 0, this.width, this.height);
-        this.ctx.beginPath();
-        this.ctx.fillStyle = "skyblue";
-        this.ctx.strokeStyle = "gray";
-        this.ctx.rect(this.mouse_x, 200, 60, 20);
-        this.ctx.fill();
-        this.ctx.stroke();
+        this.paddle.draw(this.ctx, this.mouse_x);
     };
     Game.prototype.storeMousePosition = function (event) {
         this.mouse_x = Math.min(event.clientX, this.width);
@@ -37,6 +37,30 @@ var Game = (function () {
     return Game;
 })();
 module.exports = Game;
+
+},{"./constants":2,"./paddle":4}],4:[function(require,module,exports){
+var constants = require("./constants");
+var Paddle = (function () {
+    function Paddle() {
+        this.width = constants.INITIAL_PADDLE_WIDTH;
+        this.pos = constants.SCREEN_WIDTH_PX / 2;
+    }
+    Paddle.prototype.draw = function (ctx, mouse_x) {
+        var leftEdge = mouse_x - this.width / 2;
+        var rightEdge = mouse_x + this.width / 2;
+        if (!(leftEdge < 0 || rightEdge > constants.SCREEN_WIDTH_PX)) {
+            this.pos = mouse_x;
+        }
+        ctx.beginPath();
+        ctx.fillStyle = "skyblue";
+        ctx.strokeStyle = "gray";
+        ctx.rect(this.pos - this.width / 2, 400, this.width, 20);
+        ctx.fill();
+        ctx.stroke();
+    };
+    return Paddle;
+})();
+module.exports = Paddle;
 
 },{"./constants":2}]},{},[1])(1)
 });
