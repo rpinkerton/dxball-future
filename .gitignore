@@ -39,3 +39,6 @@ dist
 # IntelliJ
 .idea
 tsutil.iml
+
+# gedit
+*~

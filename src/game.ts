@@ -1,4 +1,5 @@
 import constants = require("./constants");
+import Paddle = require("./paddle");
 
 class Game {
 
@@ -32,11 +33,17 @@ class Game {
    */
   mouse_y: number;
 
+  /**
+   * The paddle game object that the user controls.
+   */
+  paddle: Paddle;
+
   constructor() {
     this.canvas = <HTMLCanvasElement>document.getElementById(constants.CANVAS_ID);
     this.ctx = this.canvas.getContext("2d");
     this.width = this.canvas.clientWidth;
     this.height = this.canvas.clientHeight;
+    this.paddle = new Paddle();
   }
 
   /**
@@ -51,17 +58,17 @@ class Game {
 
     setInterval(game.draw.bind(game), constants.INITIAL_INTERVAL_MS);
 
+    game.canvas.style.cursor = "none";
+
     return game;
   }
 
   draw() {
+    /* Clear the screen for redraw */
     this.ctx.clearRect(0, 0, this.width, this.height);
-    this.ctx.beginPath();
-    this.ctx.fillStyle = "skyblue";
-    this.ctx.strokeStyle = "gray";
-    this.ctx.rect(this.mouse_x, 200, 60, 20);
-    this.ctx.fill();
-    this.ctx.stroke();
+
+    /* Draw the paddle */
+    this.paddle.draw(this.ctx, this.mouse_x);
   }
 
   /**
